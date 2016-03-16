@@ -1,7 +1,6 @@
 var GMaps = require('gmaps');
 var apiKey = "d23ec3e8f93b21ade5903329633865b3";
-// //weather api for london:
-// //http://api.openweathermap.org/data/2.5/find?lat=51.5073346&lon=-0.1276831&cnt=10&appid=b1b15e88fa797225412429c1c50c122a
+
 var map;
 // Update position
 $(document).on('submit', '.edit_marker', function(e) {
@@ -41,9 +40,10 @@ $(document).on('click', '.pan-to-marker', function(e) {
 $(document).ready(function() {
     map = new GMaps({
         div: '#map',
-        lat: -12.043333,
-        lng: -77.028333
+        lat: 45.5200,
+        lng: 122.6819
     });
+
     GMaps.on('marker_added', map, function(marker) {
         $('#markers-with-index').append(
             '<li><a href="#" class="pan-to-marker" data-marker-index="' +
@@ -60,26 +60,19 @@ $(document).ready(function() {
         var lat = event.latLng.lat();
         var lng = event.latLng.lng();
 
-        var content;
-        var content = $.get('http://api.openweathermap.org/data/2.5/find?lat=' + lat + '&lon=' + lng + '&cnt=10&appid=d23ec3e8f93b21ade5903329633865b3').then(function(response) {
-          console.log(response.list[0].main);
-          var location = responce.list[0].main;
+        $.getJSON('http://api.openweathermap.org/data/2.5/find?lat=' + lat + '&lon=' + lng + '&cnt=10&appid=c7adaab3f10da30791ccdeeee0c3d029',function(result){
 
-        content = "<p>The humidity in is " + response.message + "</p>";
-        }).fail(function(error) {
-        $('.showWeather').text(error.message);
-        });
+          var content = "<p> Temperature: " + (Math.ceil((result.list[0].main.temp - 273.15))* 1.800 + 32) + "</p>" + "<p>" + result.list[0].weather[0].description + "</p>";
+          var template = $('#edit_marker_template').text();
 
-        var template = $('#edit_marker_template').text();
-        // var content = "<p>Latitude " + lat + "</p>";
-
-        map.addMarker({
-            lat: lat,
-            lng: lng,
-            title: 'Marker #' + index,
-            infoWindow: {
-                content: content
-            }
+          map.addMarker({
+              lat: lat,
+              lng: lng,
+              title: 'Marker #' + index,
+              infoWindow: {
+                  content: content
+              }
+            });
         });
     });
 });

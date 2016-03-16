@@ -16,22 +16,31 @@
         padding: 0;
       }
       #map {
+        z-index: 5;
         height: 100%;
         width: 100%;
+        position: relative;
       }
+      .inline-search { position: absolute; top: 10px; left: 10px; z-index: 99; }
+      input[type="text"]{background-color: rgba(0,0,0,0.2); border: none; min-height: 30px;}
     </style>
   </head>
   <body>
+
+
+
+  <div id="map">
+
+
+  </div>
+  <div class="inline-search">
     <form method="post" id="geocoding_form">
-              <label for="address">Address:</label>
-              <div class="input">
-                <input type="text" id="address" name="address" />
-                <input type="submit" class="btn" value="Search" />
-              </div>
-            </form>
-
-  <div id="map"></div>
-
+      <label for="address">Search for a place</label>
+      <div class="input">
+        <input type="text" id="address" name="address" />
+        <input type="submit" class="btn" value="Search" />
+      </div>
+    </div>
 
   </body>
 </html>

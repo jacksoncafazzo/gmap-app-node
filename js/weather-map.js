@@ -9,23 +9,32 @@ $(document).ready(function() {
         div: '#map',
         lat: 45.536951,
         lng: -122.649971,
-        zoom: 4
+        zoom: 4,
+        disableDefaultUI: true
     });
 
     $('#geocoding_form').submit(function(e){
         e.preventDefault();
-        console.log(map);
         GMaps.geocode({
           address: $('#address').val().trim(),
           callback: function(results, status){
             if(status=='OK'){
-              console.log(map);
-              var latlng = results[0].geometry.location;
-              map.setCenter(latlng.lat(), latlng.lng());
+            var latlng = results[0].geometry.location;
+
+            $.getJSON('http://api.openweathermap.org/data/2.5/find?lat=' + latlng.lat() + '&lon=' + latlng.lng() + '&cnt=10&appid=c7adaab3f10da30791ccdeeee0c3d029',function(result){
+
+              var content = "<p>City: " + result.list[0].name + "</p>" + "<p>Temperature: " + ((result.list[0].main.temp - 273.15)* 1.800 + 32).toFixed(0) + "</p>" + "<p>Weather: " + result.list[0].weather[0].description + "</p>";
+              var template = $('#edit_marker_template').text();
+
+
               map.addMarker({
                 lat: latlng.lat(),
-                lng: latlng.lng()
+                lng: latlng.lng(),
+                infoWindow: {
+                    content: content
+                }
               });
+            });
             }
           }
         });

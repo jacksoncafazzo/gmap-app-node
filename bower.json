@@ -3,7 +3,7 @@
   "description": "A template for gulp",
   "main": "index.html",
   "authors": [
-    "Tim & Lawton"
+    "Tim & Will"
   ],
   "license": "ISC",
   "moduleType": [],
@@ -17,6 +17,7 @@
   ],
   "dependencies": {
     "jquery": "^2.2.1",
-    "moment": "^2.12.0"
+    "moment": "^2.12.0",
+    "bootstrap": "^3.3.6"
   }
 }

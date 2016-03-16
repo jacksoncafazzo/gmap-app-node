@@ -1,0 +1,22 @@
+{
+  "name": "gulp-template",
+  "description": "A template for gulp",
+  "main": "index.html",
+  "authors": [
+    "Tim & Lawton"
+  ],
+  "license": "ISC",
+  "moduleType": [],
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "^2.2.1",
+    "moment": "^2.12.0"
+  }
+}

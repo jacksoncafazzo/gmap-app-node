@@ -1,40 +1,141 @@
 var GMaps = require('gmaps');
-//weather api for london:
-//http://api.openweathermap.org/data/2.5/find?lat=51.5073346&lon=-0.1276831&cnt=10&appid=b1b15e88fa797225412429c1c50c122a
-$(document).ready(function() {
-    var map = new GMaps({
-        div: '#map',
-        lat: 51.5073346,
-        lng: -0.1276831,
-        width: '500px',
-        height: '500px',
-        zoom: 12,
-        zoomControl: true,
-        zoomControlOpt: {
-            style: 'SMALL',
-            position: 'TOP_LEFT'
-        },
-        panControl: false,
+// //weather api for london:
+// //http://api.openweathermap.org/data/2.5/find?lat=51.5073346&lon=-0.1276831&cnt=10&appid=b1b15e88fa797225412429c1c50c122a
+// // $(document).ready(function() {
+// //     var map = new GMaps({
+// //         div: '#map',
+// //         lat: 51.5073346,
+// //         lng: -0.1276831,
+// //         width: '500px',
+// //         height: '500px',
+// //         zoom: 12,
+// //         zoomControl: true,
+// //         zoomControlOpt: {
+// //             style: 'SMALL',
+// //             position: 'TOP_LEFT'
+// //         },
+// //         panControl: false,
+// //     });
+//
+//     //Marker-pan
+//   $(document).on('click', '.pan-to-marker', function(e) {
+//   e.preventDefault();
+//
+//   var lat, lng;
+//
+//   var $index = $(this).data('marker-index');
+//   var $lat = $(this).data('marker-lat');
+//   var $lng = $(this).data('marker-lng');
+//
+//   if ($index != undefined) {
+//     // using indices
+//     var position = map.markers[$index].getPosition();
+//     lat = position.lat();
+//     lng = position.lng();
+//   }
+//   else {
+//     // using coordinates
+//     lat = $lat;
+//     lng = $lng;
+//   }
+//
+//   map.setCenter(lat, lng);
+// });
+//
+//     var map = new GMaps({
+//         div: '#map',
+//         lat: 51.5073346,
+//         lng: -0.1276831,
+//         width: '500px',
+//         height: '500px',
+//         zoom: 12,
+//         zoomControl: true,
+//         zoomControlOpt: {
+//             style: 'SMALL',
+//             position: 'TOP_LEFT'
+//         },
+//         panControl: false,
+//     });
+// });
+
+var map;
+
+// Update position
+$(document).on('submit', '.edit_marker', function(e) {
+  e.preventDefault();
+
+  var $index = $(this).data('marker-index');
+
+  $lat = $('#marker_' + $index + '_lat').val();
+  $lng = $('#marker_' + $index + '_lng').val();
+
+  var template = $('#edit_marker_template').text();
+
+  // Update form values
+  var content = template.replace(/{{index}}/g, $index).replace(/{{lat}}/g, $lat).replace(/{{lng}}/g, $lng);
+
+  map.markers[$index].setPosition(new google.maps.LatLng($lat, $lng));
+  map.markers[$index].infoWindow.setContent(content);
+
+  $marker = $('#markers-with-coordinates').find('li').eq(0).find('a');
+  $marker.data('marker-lat', $lat);
+  $marker.data('marker-lng', $lng);
+});
+
+// Update center
+$(document).on('click', '.pan-to-marker', function(e) {
+  e.preventDefault();
+
+  var lat, lng;
+
+  var $index = $(this).data('marker-index');
+  var $lat = $(this).data('marker-lat');
+  var $lng = $(this).data('marker-lng');
+
+  if ($index != undefined) {
+    // using indices
+    var position = map.markers[$index].getPosition();
+    lat = position.lat();
+    lng = position.lng();
+  }
+  else {
+    // using coordinates
+    lat = $lat;
+    lng = $lng;
+  }
+
+  map.setCenter(lat, lng);
+});
+
+$(document).ready(function(){
+  map = new GMaps({
+    div: '#map',
+    lat: -12.043333,
+    lng: -77.028333
+  });
+
+  GMaps.on('marker_added', map, function(marker) {
+    $('#markers-with-index').append('<li><a href="#" class="pan-to-marker" data-marker-index="' + map.markers.indexOf(marker) + '">' + marker.title + '</a></li>');
+
+    $('#markers-with-coordinates').append('<li><a href="#" class="pan-to-marker" data-marker-lat="' + marker.getPosition().lat() + '" data-marker-lng="' + marker.getPosition().lng() + '">' + marker.title + '</a></li>');
+  });
+
+  GMaps.on('click', map.map, function(event) {
+    var index = map.markers.length;
+    var lat = event.latLng.lat();
+    var lng = event.latLng.lng();
+
+    var template = $('#edit_marker_template').text();
+
+    var content = template.replace(/{{index}}/g, index).replace(/{{lat}}/g, lat).replace(/{{lng}}/g, lng);
+
+    map.addMarker({
+      lat: lat,
+      lng: lng,
+      title: 'Marker #' + index,
+      infoWindow: {
+        content : content
+      }
     });
-    map.setContextMenu({
-        control: 'map',
-        options: [{
-            title: 'Add marker',
-            name: 'add_marker',
-            action: function(e) {
-                this.addMarker({
-                    lat: e.latLng.lat(),
-                    lng: e.latLng.lng(),
-                    title: 'New marker'
-                });
-            }
-        }, {
-            title: 'Center here',
-            name: 'center_here',
-            action: function(e) {
-                this.setCenter(e.latLng.lat(), e.latLng
-                    .lng());
-            }
-        }]
-    });
+  });
 });
